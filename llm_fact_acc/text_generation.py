@@ -44,7 +44,7 @@ def generate_text(model, tokenizer, prompt, max_length=50, num_beams=3):
                              max_length=max_length,
                              do_sample=True,
                              num_beams=num_beams,
-                             temperature=0.7,
+                             temperature=0.1,
                              no_repeat_ngram_size=2,
                              early_stopping=True,
                              eos_token_id=tokenizer.encode(".")[0])
