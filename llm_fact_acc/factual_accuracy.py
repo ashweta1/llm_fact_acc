@@ -1,7 +1,15 @@
 import re
+import torch
 from nltk.translate.bleu_score import sentence_bleu, SmoothingFunction
 from llm_fact_acc import text_generation
-import torch
+from rag_wiki import rag
+
+# Set the following variables in your script before calling the functions below for using RAG
+USE_RAG=False
+RAG_INDEX=None
+RAG_TEXTS=None
+RAG_TOP_K_TEXTS=1
+RAG_MAX_CONTEXT_LEN=1000
 
 def prepare_prompt(prompt, prepend_context=None):
     if prepend_context:
@@ -22,16 +30,32 @@ def clean_text(text):
     return re.sub(r'[^\w\s]', '', text).strip()
 
 
-def extract_question_answers_from_example(example, dataset_type):
+def extract_question_answers_from_example(example, dataset_type, debug=False):
     if dataset_type == "knowns":
-        return example["prompt"], [example["prediction"]]
+        question = example["prompt"]
+        answers = [example["prediction"]]
     elif dataset_type == "squad":
-        return example["question"], example["answers"]["text"]
+        question = example["question"]
+        answers = example["answers"]["text"]
     elif dataset_type == "wikiqa":
-        return example["question"], [example["answer"]]
+        question = example["question"]
+        answers = [example["answer"]]
     else:
         raise ValueError(f"Unknown dataset type: {dataset_type}")
+    debug and print("Question: ", question)
+    debug and print("Answers: ", answers)
 
+    if USE_RAG:
+        debug and print("Using RAG for question: ", question)
+        if not RAG_INDEX:
+            raise ValueError("RAG_INDEX is not set")
+        if not RAG_TEXTS:
+            raise ValueError("RAG_TEXTS is not set")
+        retrieved_texts = rag.retrieve([question], RAG_INDEX, RAG_TEXTS, top_k=RAG_TOP_K_TEXTS, debug=debug)
+        question = [" ".join(ts)[:RAG_MAX_CONTEXT_LEN] + "\n" + question for ts in retrieved_texts][0]
+        debug and print("Question with context: ", question)
+
+    return question, answers
 
 def first_token_accuracy(model,
                          tokenizer,
@@ -45,7 +69,7 @@ def first_token_accuracy(model,
     total = 0
     ignored = 0
     for k in known_facts:
-        question, answers = extract_question_answers_from_example(k, dataset_type)
+        question, answers = extract_question_answers_from_example(k, dataset_type, debug=debug)
         debug and print("Question: ", question)
         debug and print("Answers: ", answers)
 
@@ -98,7 +122,7 @@ def avg_perplexity(model,
     total = 0
     ignored = 0
     for k in known_facts:
-        question, answers = extract_question_answers_from_example(k, dataset_type)
+        question, answers = extract_question_answers_from_example(k, dataset_type, debug=debug)
         if len(answers) == 0:
             debug and print("No answers for question: ", question)
             ignored += 1

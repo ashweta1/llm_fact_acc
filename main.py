@@ -19,7 +19,6 @@ if __name__ == '__main__':
     print(squad_val)
 
     # === Evaluate the model ===
-
     print("=== SQuAD ===")
     accuracy, total, ignored = factual_accuracy.first_token_accuracy(model, tokenizer, squad_val, dataset_type="squad",
                                                                      weighted=True, debug=True, max_examples=10)

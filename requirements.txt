@@ -3,3 +3,4 @@ torch
 nltk
 matplotlib
 datasets
+rag_wiki  # pip install git+https://github.com/ashweta1/rag_wiki.git
