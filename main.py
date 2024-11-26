@@ -20,19 +20,22 @@ if __name__ == '__main__':
 
     # === Evaluate the model ===
 
+    print("=== SQuAD ===")
+    accuracy, total, ignored = factual_accuracy.first_token_accuracy(model, tokenizer, squad_val, dataset_type="squad",
+                                                                     weighted=True, debug=True, max_examples=10)
+    print(f"Weighted accuracy: {accuracy * 100:.2f}%, Total: {total}, Ignored: {ignored}")
+
     print("=== WikiQA ===")
     accuracy, total, ignored = factual_accuracy.first_token_accuracy(model, tokenizer, wikiqa_val, dataset_type="wikiqa", weighted=True)
     print(f"Weighted accuracy: {accuracy*100:.2f}%, Total: {total}, Ignored: {ignored}")
-    perlexity, loss, total, ignored = factual_accuracy.avg_perplexity(model, tokenizer, wikiqa_val, dataset_type="wikiqa")
-    print(f"Average Perplexity: {perlexity:.2f}, Loss: {loss:.2f}, Total: {total}, Ignored: {ignored}")
+    perplexity, loss, total, ignored = factual_accuracy.avg_perplexity(model, tokenizer, wikiqa_val, dataset_type="wikiqa")
+    print(f"Average Perplexity: {perplexity:.2f}, Loss: {loss:.2f}, Total: {total}, Ignored: {ignored}")
     f1_score, total, ignored = factual_accuracy.avg_f1_score(model, tokenizer, wikiqa_val, dataset_type="wikiqa")
     print(f"Average F1 score: {f1_score:.4f}, Total: {total}, Ignored: {ignored}")
     bleu_score, total, ignored = factual_accuracy.avg_bleu_score(model, tokenizer, wikiqa_val, dataset_type="wikiqa")
     print(f"Average BLEU score: {bleu_score:.4f}, Total: {total}, Ignored: {ignored}")
 
 
-    # print("=== SQuAD ===")
-    # accuracy, total, ignored = factual_accuracy.first_token_accuracy(model, tokenizer, squad_val, dataset_type="squad", weighted=True)
-    # print(f"Weighted accuracy: {accuracy*100:.2f}%, Total: {total}, Ignored: {ignored}")
+
 
 

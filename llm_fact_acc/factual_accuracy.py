@@ -69,6 +69,7 @@ def first_token_accuracy(model,
             debug and print("Max prob = ", result[0][1])
             for r in result:
                 if clean_text(r[0]) == expected_prediction.strip():
+                    debug and print("Correct prediction! ", r[0])
                     debug and r[1] < max_prob and print(
                         f"Lower prob matching prediction: {r[0]} with relative probability {r[1] / max_prob}")
                     correct += r[1] / max_prob
@@ -281,5 +282,3 @@ def avg_f1_score(model,
             break
 
     return sum_f1 / total, total, ignored
-
-
