@@ -70,9 +70,8 @@ def first_token_accuracy(model,
             for r in result:
                 if clean_text(r[0]) == expected_prediction.strip():
                     debug and print("Correct prediction! ", r[0])
-                    debug and r[1] < max_prob and print(
-                        f"Lower prob matching prediction: {r[0]} with relative probability {r[1] / max_prob}")
-                    correct += r[1] / max_prob
+                    debug and print("Adding correct with relative probability: ", r[1] / max_prob)
+                    correct += (r[1] / max_prob)
                     break
         else:
             if clean_text(result[0][0]) == expected_prediction:
@@ -84,6 +83,7 @@ def first_token_accuracy(model,
             break
 
     debug and print("Total examples processed: ", total)
+    debug and print("Total correct: ", correct)
     return correct / max(total, 1), total, ignored
 
 
