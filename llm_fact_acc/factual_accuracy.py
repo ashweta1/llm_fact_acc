@@ -212,7 +212,7 @@ def avg_bleu_score(model,
     sum_bleu = 0
     total = 0
     ignored = 0
-    # smoothing = SmoothingFunction()
+    smoothing = SmoothingFunction()
 
     for example in known_facts:
         question, answers, generated_answer = generate_question_answers_from_example(model,
@@ -240,7 +240,7 @@ def avg_bleu_score(model,
             bleu = sentence_bleu(reference_tokens_list,
                                  generated_tokens,
                                  weights=ngram_weights,
-                                 smoothing_function=None)
+                                 smoothing_function=smoothing.method1)
             if debug:
                 print(f"Bleu score for question: '{question}'\n"
                       f"Answers: '{answers}'\n"
